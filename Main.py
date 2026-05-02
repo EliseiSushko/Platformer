@@ -12,7 +12,15 @@ window.fill((216, 219, 124))
 speed_x = 3
 speed_y = 3
 
+#Класс врага
 
+class Coin(sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = Surface((20, 20), SRCALPHA)
+        draw.circle(self.image, (255, 215, 0), (10, 10), 10)
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
 class GameSprite(sprite.Sprite):
     def __init__(self,color,x,y,w, h, spd):
@@ -31,6 +39,21 @@ class Platform(GameSprite):
     def __init__(self, x, y, w, h=20):
         super().__init__((60, 179, 60), x, y, w, h, 0)
 
+class Enemy(GameSprite):
+    def __init__(self, color, x, y, w, h, spd, left, right):
+        super().__init__(color, x, y , w, h, spd)
+        self.left_bound = left
+        self.right_bound = right
+
+    def update(self):
+        self.rect.x += self.speed
+        if self.rect.right >= self.right_bound or self.rect.left <= self.left_bound:
+            self.speed *= -1
+
+
+
+
+#Платформы
 p = Platform(0, 480, 700)
 platforms = sprite.Group()
 platforms.add(p)
@@ -49,6 +72,18 @@ platforms.add(m)
 
 j = Platform(500, 300, 100)
 platforms.add(j)
+
+
+#Монеты
+a = Coin(250, 180)
+coins = sprite.Group()
+coins.add(a)
+
+b = Coin(450, 450)
+coins.add(b)
+
+
+enemy = Enemy((255, 0, 0), 300, 250, 50, 50, 3, 300, 400)
 
 class Player(GameSprite):
     def __init__(self, color, x, y, w, h, spd):
@@ -111,10 +146,13 @@ while game:
         window.fill((216, 219, 124))
 
         platforms.draw(window)
+        coins.draw(window)
 
         player.update()
         player.reset()
 
+        enemy.reset()
+        enemy.update()
 
 
         display.update()
