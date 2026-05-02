@@ -83,8 +83,10 @@ b = Coin(450, 450)
 coins.add(b)
 
 
-enemy = Enemy((255, 0, 0), 300, 250, 50, 50, 3, 300, 400)
+enemys = sprite.Group()
 
+enemy = Enemy((255, 0, 0), 300, 250, 50, 50, 3, 300, 400)
+enemys.add(enemy)
 class Player(GameSprite):
     def __init__(self, color, x, y, w, h, spd):
         super().__init__(color, x, y, w, h, spd)
@@ -130,6 +132,9 @@ lose2 = font.render('player2 lost', True,(180,0,0))
 game = True
 finish = False
 
+score = 0
+hp = 3
+
 
 while game:
 
@@ -142,8 +147,25 @@ while game:
         
     if finish != True:
 
+        if sprite.spritecollide(player,coins,True):
+            score += 10
+
+        if sprite.spritecollide(player,enemys,True):
+            hp -= 1
+
+
 
         window.fill((216, 219, 124))
+
+
+        hptext = font.render('жизни: '+ str(hp), True,(180,0,0))
+
+        window.blit(hptext,(50, 100))
+
+
+        scoretext = font.render('счёт: '+ str(score), True,(180,0,0))
+
+        window.blit(scoretext,(50, 50))
 
         platforms.draw(window)
         coins.draw(window)
@@ -151,8 +173,8 @@ while game:
         player.update()
         player.reset()
 
-        enemy.reset()
-        enemy.update()
+        enemys.draw(window)
+        enemys.update()
 
 
         display.update()
